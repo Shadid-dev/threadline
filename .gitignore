@@ -181,5 +181,5 @@ cython_debug/
 .cursorindexingignore
 .env
 *.db
-.DS_Store
+.DS_Store 
 ~$*.docx
