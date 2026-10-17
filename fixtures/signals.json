@@ -19,7 +19,7 @@
     "signal_id": "SIG-003",
     "source": "monitor",
     "service": "checkout",
-    "timestamp": "14:04",
+    "timestamp": "14:11",
     "content": "Checkout error rate 18 percent",
     "thread_id": null
   },
@@ -27,7 +27,7 @@
     "signal_id": "SIG-004",
     "source": "jira",
     "service": "checkout",
-    "timestamp": "14:06",
+    "timestamp": "14:18",
     "content": "Customer ticket: I cannot pay for my order",
     "thread_id": null
   },
@@ -35,7 +35,7 @@
     "signal_id": "SIG-005",
     "source": "slack",
     "service": "checkout",
-    "timestamp": "14:07",
+    "timestamp": "14:28",
     "content": "Is checkout down for anyone else?",
     "thread_id": null
   },
@@ -43,7 +43,7 @@
     "signal_id": "SIG-006",
     "source": "sentry",
     "service": "checkout",
-    "timestamp": "14:09",
+    "timestamp": "14:39",
     "content": "TypeError in discount.py line 88, now 400 events",
     "thread_id": null
   },

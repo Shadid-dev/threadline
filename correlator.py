@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 HERE = Path(__file__).parent
-WINDOW_MINUTES = 1 
+WINDOW_MINUTES = 5
 
 
 def to_minutes(t):

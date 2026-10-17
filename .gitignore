@@ -183,3 +183,4 @@ cython_debug/
 *.db
 .DS_Store 
 ~$*.docx
+.venv/
