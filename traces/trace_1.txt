@@ -1,0 +1,12 @@
+% /Users/shadidalam/Desktop/fall2026/pythonL/
+threadline/.venv/bin/python /Users/shadidalam/
+Desktop/fall2026/pythonL/threadline/agent.py
+calling the model...
+--- TRACE ---
+CALL: find_candidate_threads {'service': 'checkout', 'timestamp': '14:03'}
+  -> {'result': [{'thread_id': 'THR-001', 'service': 'checkout', 'status': 'open', 'last_activity': '14:03', 'signals': ['SIG-001', 'SIG-002']}]}
+CALL: attach_signal {'timestamp': '14:03', 'thread_id': 'THR-001', 'signal_id': 'SIG-002'}
+  -> {'result': {'ok': True, 'thread_id': 'THR-001'}}
+--- ANSWER ---
+I attached signal SIG-002 to existing thread THR-001. Exactly one active candidate thread matching the checkout service within the 30-minute window was found.
+(.venv) shadidalam@Shadids-MacBook-Pro pythonL % 
