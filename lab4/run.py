@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from .scenarios import SCENARIOS, FaultBackend
-from .system import GeminiBackend, OfflineBackend, Orchestrator, ThreadStore, save_json
+from .system import ConcordiaBackend, GeminiBackend, OfflineBackend, Orchestrator, ThreadStore, save_json
 
 
 def run_scenarios(mode="dynamic", backend=None, selected=None):
@@ -30,14 +30,20 @@ def run_scenarios(mode="dynamic", backend=None, selected=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=["static", "dynamic"], default="dynamic")
-    parser.add_argument("--backend", choices=["offline", "gemini"], default="offline")
-    parser.add_argument("--model", default="gemini-flash-latest")
+    parser.add_argument("--backend", choices=["offline", "gemini", "concordia"], default="offline")
+    parser.add_argument("--model", default=None,
+                        help="Default: qwen3-8b for Concordia; gemini-flash-latest for Gemini")
     parser.add_argument("--scenario", choices=[s["name"] for s in SCENARIOS], action="append")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--signal-file", type=Path,
                         help="Process one JSON signal against a fresh run-local store")
     args = parser.parse_args()
-    backend = GeminiBackend(args.model) if args.backend == "gemini" else OfflineBackend()
+    if args.backend == "gemini":
+        backend = GeminiBackend(args.model or "gemini-flash-latest")
+    elif args.backend == "concordia":
+        backend = ConcordiaBackend(args.model or "qwen3-8b")
+    else:
+        backend = OfflineBackend()
     if args.signal_file:
         outputs = [Orchestrator(args.mode, backend).run(json.loads(args.signal_file.read_text()))]
     else:

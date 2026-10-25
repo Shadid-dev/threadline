@@ -3,7 +3,7 @@
 Name: Shadid Alam Al Huda
 Student ID: 40334643
 Course: INSE 691 - Foundations of AI Agent Systems
-Individual lab | 25 October 2026
+Submission date: 27 October 2026
 
 ## 1. Summary of system functionality
 
@@ -11,7 +11,7 @@ ThreadLine is an incident assistant for situations where operational evidence is
 
 Lab 3 implemented a single Correlator that attached a signal to an incident thread or opened a new thread. This lab retains that responsibility and adds three cooperating agents. A Narrator selects observations from the thread with signal citations. A Grounding Validator independently checks those observations against stored evidence. An Action Drafter proposes a limited next step for human approval. A central manager controls information exchange, schedules agents, handles rejected outputs, and produces a result with a full execution trace.
 
-The prototype supports two coordination modes. Static mode follows a predefined sequence. Dynamic mode changes its route using runtime results: duplicate signals skip repeated work, missing service data triggers human review, and a rejected narration gets one revision before escalation. The offline implementation uses explicit rule-based decisions and can be reproduced without API credentials. Optional Gemini execution gives the Narrator and Action Drafter separate model calls and instructions while retaining deterministic correlation and validation. The result is a bounded, testable starting point for the group project, with a clear distinction between observed evidence, proposed actions, and human decisions.
+The prototype supports two coordination modes. Static mode follows a predefined sequence. Dynamic mode changes its route using runtime results: duplicate signals skip repeated work, missing service data triggers human review, and a rejected narration gets one revision before escalation. The offline implementation uses explicit rule-based decisions and can be reproduced without API credentials. Optional Gemini or Concordia Qwen execution gives the Narrator and Action Drafter separate model calls and instructions while retaining deterministic correlation and validation. The result is a bounded, testable starting point for the group project, with a clear distinction between observed evidence, proposed actions, and human decisions.
 
 ## 2. System structure and agent decomposition
 
@@ -25,7 +25,7 @@ Function: attach a signal or create a thread. Static attributes: role name, same
 
 ### Narrator
 
-Function: select incident observations with evidence references. Static attributes: role instructions, read-only access, summary schema, and prohibition on unsupported causal claims. Dynamic attributes: call count, selected quotations, latest proposal, and revision feedback supplied by the manager. Offline behavior quotes all available observations. Gemini behavior selects observations through a separate structured-output request. It must preserve each quoted content field exactly; it does not write a free-form root-cause conclusion.
+Function: select incident observations with evidence references. Static attributes: role instructions, read-only access, summary schema, and prohibition on unsupported causal claims. Dynamic attributes: call count, selected quotations, latest proposal, and revision feedback supplied by the manager. Offline behavior quotes all available observations. Live model behavior selects observations through a separate JSON-output request. Gemini uses a response schema; Concordia receives the schema in its instructions and is checked locally. It must preserve each quoted content field exactly; it does not write a free-form root-cause conclusion.
 
 ### Grounding Validator
 
@@ -49,7 +49,7 @@ The dated format fixes the earlier HH:MM-only arithmetic limitation. This protot
 
 Narrator receives thread evidence and optional rejection feedback. It returns an `observations` array, each item containing only `signal_id` and an exact `quote`. Validator rejects wrong keys, empty observations, unknown citations, changed quotations, or repeated citations. An approved proposal can proceed to action drafting. Action Drafter returns a schema-constrained action kind, evidence citations, and `requires_human_approval: true`. Its output is independently checked before inclusion in the final result.
 
-The offline agents use rule-based local reasoning. In optional live mode, Narrator and Action Drafter use Gemini with separate role instructions and JSON response schemas; the system does not claim every agent is an LLM. There is no silent model-to-rules fallback. A model exception is traced by error type and produces human review. Correlation state already committed before such an exception is retained, while unvalidated prose is withheld.
+The offline agents use rule-based local reasoning. In optional live mode, Narrator and Action Drafter use Gemini or Concordia Qwen with separate role instructions and JSON output contracts; the system does not claim every agent is an LLM. There is no silent model-to-rules fallback. A model exception is traced by error type and produces human review. Correlation state already committed before such an exception is retained, while unvalidated prose is withheld.
 
 ## 4. Coordination and orchestration: static and dynamic
 
@@ -87,15 +87,21 @@ Fault injection in prompts 8 and 9 is deliberately generated by a test backend a
 
 ## 6. Working prototype, execution evidence, and limitations
 
-Run `python3 -m lab4.run --mode dynamic` from the repository root. Run the static comparison with `--mode static`, and the regression suite with `python3 -m unittest lab4.test_system -v`. Standard-library Python is sufficient for offline runs. Optional Gemini dependencies and configuration are documented in `README.md`. The Lab 3 entry points and original fixtures are preserved; the Lab 4 module owns isolated state and uses narrower interfaces suitable for cooperation.
+Run `python3 -m lab4.run --mode dynamic` from the repository root. Run the static comparison with `--mode static`, and the regression suite with `python3 -m unittest lab4.test_system lab4.test_concordia -v`. Standard-library Python is sufficient for offline runs. Optional model dependencies and Gemini/Concordia configuration are documented in `README.md`. The Lab 3 entry points and original fixtures are preserved; the Lab 4 module owns isolated state and uses narrower interfaces suitable for cooperation.
 
 The prototype is agent-based through distinct roles, local state, decision policies, and structured interaction. Its dynamic behavior is bounded adaptation inside a designed workflow. It does not autonomously discover new roles or negotiate objectives. Exact quotation validation reduces fabricated observations, but it cannot establish truth, detect every malicious meaning, or guarantee complete evidence selection. A malicious string can still be displayed as a quote. Evidence inspection is a proposed action only, and human approval is represented as a required output flag rather than an implemented UI.
 
 The store is not concurrent or durable. There are no authenticated source connectors, incident cause attribution, customer-message delivery, or production approvals. Optional live model execution depends on provider availability, supported model names, and quota. Offline traces and fault-injection traces remain distinct from live execution evidence.
 
+### Concordia local model option
+
+The supplied course guide describes Qwen3-8B behind the ENCS LiteLLM service. The new `concordia` backend calls its chat-completions endpoint at `http://localhost:4000/v1` after the user establishes an SSH tunnel through `login.encs.concordia.ca` to `aise-01.encs.concordia.ca:4000`. The default campus model is `qwen3-8b`. A personal campus key belongs in a private `.env` as `CONCORDIA_API_KEY`; it is separate from the Gemini key.
+
+This integration calls the endpoint directly from Python. Continue is optional for interactive VS Code chat and is not a dependency of the prototype. The guide does not promise server-side JSON Schema support, so the adapter requests JSON in its instructions, parses the response, and uses the same independent grounding and action checks. Missing tunnel, invalid output, and request failure lead to review rather than silent substitution. The campus adapter was tested with mocked HTTP responses; no live campus run is claimed because a configured campus tunnel and personal campus key were not available during this revision. Existing live evidence remains Gemini evidence.
+
 ### Captured execution results
 
-Thirteen regression tests passed. Both modes completed all nine isolated offline scenarios. Dynamic mode repaired the injected one-time narration error, while static mode requested review. Both modes escalated repeated invalid narration. The action list executed by the application remained empty in every scenario.
+Eighteen regression tests passed: thirteen system checks and five mocked campus-adapter checks. Both modes completed all nine isolated offline scenarios. Dynamic mode repaired the injected one-time narration error, while static mode requested review. Both modes escalated repeated invalid narration. The action list executed by the application remained empty in every scenario.
 
 Three genuine live scenarios were then executed using `gemini-3.5-flash-lite`, with a separate Narrator call and, where permitted, an Action Drafter call. The attach and prompt-injection scenarios reached `awaiting_approval` with validated observations and action proposals. The missing-service scenario reached `needs_human_review`, with an approved summary and no Action Drafter invocation, as designed. These are actual model responses in `traces/gemini_live.json`, not offline substitutions. This limited sample does not establish general injection resistance or provider reliability.
 
@@ -106,3 +112,5 @@ An earlier smoke test using the `gemini-flash-latest` alias encountered provider
 - Course Module 4, Multi-Agent Coordination and Orchestration: functional decomposition; cooperative coordination; hierarchical architecture; local decision schemes; static, dynamic, and code-directed scheduling.
 - Lab 3 ThreadLine prototype and captured traces: starting Correlator design and known duplicate/timestamp limitations.
 - Google Gen AI SDK, structured output configuration: https://googleapis.github.io/python-genai/ . Used for the optional Gemini backend, not required for offline execution.
+
+- Concordia AI Lab, How to Use the Concordia Local LLM in VS Code: campus model, SSH tunnel, LiteLLM endpoint, and personal-key setup supplied with this task.

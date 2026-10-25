@@ -11,10 +11,10 @@ Run from this repository root:
 ```sh
 python3 -m lab4.run --mode dynamic
 python3 -m lab4.run --mode static
-python3 -m unittest lab4.test_system -v
+python3 -m unittest lab4.test_system lab4.test_concordia -v
 ```
 
-The default backend is offline rules, not an LLM simulation. An optional Gemini backend runs the Narrator and Action Drafter as separate model agents. See the guide for genuine live traces and configuration.
+The default backend is offline rules, not an LLM simulation. Optional Gemini and Concordia Qwen backends run the Narrator and Action Drafter as separate model agents. The report submission date is 27 October 2026. See the guide for genuine live traces and configuration.
 
 ## Earlier prototype
 

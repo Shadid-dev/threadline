@@ -147,6 +147,61 @@ class GeminiBackend:
         return json.loads(response.text)
 
 
+class ConcordiaBackend:
+    """Campus LiteLLM chat endpoint reached through the user's ENCS SSH tunnel.
+
+    The supplied guide does not promise server-side JSON Schema enforcement.
+    Request JSON in the instructions and apply the existing independent checks.
+    """
+    def __init__(self, model="qwen3-8b", base_url=None, api_key=None):
+        import os
+        try:
+            from dotenv import load_dotenv
+        except ImportError:
+            pass  # Exported environment variables also work without dotenv.
+        else:
+            load_dotenv()
+        self.api_key = api_key or os.getenv("CONCORDIA_API_KEY")
+        if not self.api_key:
+            raise ValueError("Set CONCORDIA_API_KEY in a local .env or environment variable")
+        self.base_url = (base_url or os.getenv("CONCORDIA_BASE_URL", "http://localhost:4000/v1")).rstrip("/")
+        self.model = model
+        self.name = "concordia-live:" + model
+
+    def generate(self, role, instructions, payload, schema):
+        from urllib.request import Request, urlopen
+        request_body = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": instructions +
+                 "\nReturn only one JSON object matching this schema. Do not include reasoning or Markdown.\n" +
+                 json.dumps(schema)},
+                {"role": "user", "content": json.dumps(payload)},
+            ],
+        }
+        request = Request(self.base_url + "/chat/completions",
+                          data=json.dumps(request_body).encode("utf-8"),
+                          headers={"Authorization": "Bearer " + self.api_key,
+                                   "Content-Type": "application/json"}, method="POST")
+        # Never log request headers, credentials, or raw transport exceptions.
+        with urlopen(request, timeout=60) as response:
+            envelope = json.loads(response.read().decode("utf-8"))
+        content = envelope["choices"][0]["message"]["content"]
+        if not isinstance(content, str):
+            raise ValueError(f"{role}: campus model returned no text")
+        # Accept a fenced JSON answer, or an explicit leading thinking block,
+        # without treating free-form prose as an approved observation.
+        content = re.sub(r"^\s*<think>.*?</think>\s*", "", content, count=1, flags=re.S).strip()
+        if content.startswith("```"):
+            match = re.fullmatch(r"```(?:json)?\s*\n(.*?)\n```", content, flags=re.S)
+            if match:
+                content = match.group(1)
+        result = json.loads(content)
+        if not isinstance(result, dict):
+            raise ValueError(f"{role}: campus model must return a JSON object")
+        return result
+
+
 @dataclass
 class AgentState:
     name: str
