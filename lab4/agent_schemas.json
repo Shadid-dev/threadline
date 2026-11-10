@@ -1,0 +1,62 @@
+{
+  "narrator": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "observations": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "signal_id": {
+              "type": "string"
+            },
+            "quote": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "signal_id",
+            "quote"
+          ]
+        }
+      }
+    },
+    "required": [
+      "observations"
+    ]
+  },
+  "action_drafter": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "kind": {
+        "type": "string",
+        "enum": [
+          "inspect_evidence",
+          "request_service"
+        ]
+      },
+      "cited_signals": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string"
+        }
+      },
+      "requires_human_approval": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      }
+    },
+    "required": [
+      "kind",
+      "cited_signals",
+      "requires_human_approval"
+    ]
+  }
+}
