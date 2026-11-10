@@ -1,0 +1,66 @@
+[
+  {
+    "signal_id": "SIG-001",
+    "source": "github",
+    "service": "checkout",
+    "timestamp": "14:01",
+    "content": "Deployed v2.4.1: add discount code logic",
+    "thread_id": null
+  },
+  {
+    "signal_id": "SIG-002",
+    "source": "sentry",
+    "service": "checkout",
+    "timestamp": "14:03",
+    "content": "TypeError in discount.py line 88, 12 events",
+    "thread_id": null
+  },
+  {
+    "signal_id": "SIG-003",
+    "source": "monitor",
+    "service": "checkout",
+    "timestamp": "14:11",
+    "content": "Checkout error rate 18 percent",
+    "thread_id": null
+  },
+  {
+    "signal_id": "SIG-004",
+    "source": "jira",
+    "service": "checkout",
+    "timestamp": "14:18",
+    "content": "Customer ticket: I cannot pay for my order",
+    "thread_id": null
+  },
+  {
+    "signal_id": "SIG-005",
+    "source": "slack",
+    "service": "checkout",
+    "timestamp": "14:28",
+    "content": "Is checkout down for anyone else?",
+    "thread_id": null
+  },
+    {
+    "signal_id": "SIG-006",
+    "source": "sentry",
+    "service": "checkout",
+    "timestamp": "14:39",
+    "content": "TypeError in discount.py line 88, now 400 events",
+    "thread_id": null
+  },
+  {
+    "signal_id": "SIG-007",
+    "source": "monitor",
+    "service": "login",
+    "timestamp": "15:40",
+    "content": "Login response time up 60 percent",
+    "thread_id": null
+  },
+  {
+    "signal_id": "SIG-008",
+    "source": "sentry",
+    "service": "login",
+    "timestamp": "15:45",
+    "content": "TimeoutError in auth.py line 42, 30 events",
+    "thread_id": null
+  }
+]
