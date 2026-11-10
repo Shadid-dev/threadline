@@ -13,13 +13,14 @@ When software breaks, the evidence is scattered: a code release on GitHub, a cra
 | Part | Status |
 |---|---|
 | Correlator (groups signals into threads) | Working |
-| Narrator (summary with exact quotes) | Working in the prototype; owner to review and extend |
-| Grounding Validator (checks the summary) | Working in the prototype; owner to review and extend |
-| Action Drafter (proposes a next step) | Working in the prototype; owner to review and extend |
+| Narrator (cited summary) | Simple version working in the prototype; full version built and tested by Anirudh (68 tests) |
+| Grounding Validator (checks the summary) | Working in the prototype |
+| Action Drafter (proposes a next step) | Simple version working in the prototype; full version built and tested by Kameshwar |
 | Supervisor (decides which agent runs next) | Working (static and dynamic modes) |
-| Change Attributor (finds the code change that caused it) | Not started |
+| Change Attributor (finds the code change that caused it) | Built and tested by Ahmed as a separate prototype; not yet connected |
+| Connecting all agents into one pipeline | Next step |
 | Source adapters / MCP server, database, dashboard, evaluation | Not started |
-| Design specification (group submission) | First draft ready for team review: [`docs/design-spec/`](docs/design-spec/) |
+| Design specification (group submission) | First draft, updated with every member's Lab 2–5 work: [`docs/design-spec/`](docs/design-spec/) |
 
 The full plan, with who does what next, is in **[docs/team-roles-and-next-steps.md](docs/team-roles-and-next-steps.md)**.
 
