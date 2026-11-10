@@ -1,12 +1,13 @@
-import os
 import json
+import os
+
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+
 import tools
 
 load_dotenv()
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 AVAILABLE = {
     "list_open_threads": tools.list_open_threads,
@@ -34,14 +35,28 @@ Rules:
 When finished, state what you did and why, in two sentences."""
 
 
-def run(signal, show_trace=True):
+def get_client():
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return None
+    return genai.Client(api_key=api_key)
+
+
+def run(signal, show_trace=True, client=None, model=None):
+    client = client or get_client()
+    if client is None:
+        print("GEMINI_API_KEY is not set; skipping model call.")
+        return "Model call skipped because no GEMINI_API_KEY was configured."
+
     config = types.GenerateContentConfig(
         system_instruction=INSTRUCTIONS,
         tools=list(AVAILABLE.values()),
     )
 
     print("calling the model...")
-    chat = client.chats.create(model="gemini-3.5-flash-lite", config=config)
+    chat = client.chats.create(
+        model=model or os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite"), config=config
+    )
     response = chat.send_message(f"New signal: {json.dumps(signal)}")
 
     if show_trace:
@@ -55,12 +70,25 @@ def run(signal, show_trace=True):
         print("--- ANSWER ---")
 
     print(response.text)
-    
+    return response.text
+
+
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--audit-store", action="store_true",
+                        help="After correlation, audit the store with built-in code execution")
+    args = parser.parse_args()
+    client = get_client()
     run({
         "signal_id": "SIG-002",
         "source": "sentry",
         "service": "checkout",
         "timestamp": "14:03",
         "content": "TypeError in discount.py line 88, 12 events",
-    })
+    }, client=client)
+    if args.audit_store and client is not None:
+        from builtin_audit import audit_store
+
+        audit_store(client=client)

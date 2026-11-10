@@ -1,0 +1,38 @@
+{
+  "audit_time": "14:12",
+  "threads": [
+    {
+      "thread_id": "THR-001",
+      "service": "checkout",
+      "status": "open",
+      "last_activity": "14:03",
+      "signals": [
+        "SIG-001",
+        "SIG-002",
+        "SIG-002",
+        "SIG-001",
+        "SIG-002",
+        "SIG-005",
+        "SIG-002"
+      ]
+    },
+    {
+      "thread_id": "THR-002",
+      "service": "login",
+      "status": "open",
+      "last_activity": "15:40",
+      "signals": [
+        "SIG-003"
+      ]
+    },
+    {
+      "thread_id": "THR-003",
+      "service": "unknown",
+      "status": "open",
+      "last_activity": "14:10",
+      "signals": [
+        "SIG-004"
+      ]
+    }
+  ]
+}

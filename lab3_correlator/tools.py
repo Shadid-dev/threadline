@@ -17,25 +17,33 @@ def _save(threads):
         json.dump(threads, f, indent=2)
 
 
+def _parse_time(value: str) -> int:
+    if value is None:
+        raise ValueError("timestamp cannot be None")
+    hours, minutes = value.split(":")
+    return int(hours) * 60 + int(minutes)
+
+
 def list_open_threads() -> list:
     """Return every thread that is currently open."""
     return [t for t in _load() if t["status"] == "open"]
 
 
 def minutes_between(earlier: str, later: str) -> int:
-    """Return the gap in minutes between two HH:MM timestamps."""
-    h1, m1 = earlier.split(":")
-    h2, m2 = later.split(":")
-    return (int(h2) * 60 + int(m2)) - (int(h1) * 60 + int(m1))
+    """Return the signed gap in minutes between two HH:MM timestamps."""
+    return _parse_time(later) - _parse_time(earlier)
 
 
-def find_candidate_threads(service: str, timestamp: str, window_minutes: int = 30) -> list:
+def find_candidate_threads(service: str | None, timestamp: str, window_minutes: int = 30) -> list:
     """Return open threads matching the service and within the window."""
+    if service is None:
+        return []
     out = []
     for t in list_open_threads():
-        if t["service"] != service:
+        if t.get("service") != service:
             continue
-        if minutes_between(t["last_activity"], timestamp) <= window_minutes:
+        gap = abs(minutes_between(t["last_activity"], timestamp))
+        if gap <= window_minutes:
             out.append(t)
     return out
 
@@ -52,7 +60,7 @@ def attach_signal(thread_id: str, signal_id: str, timestamp: str) -> dict:
     return {"ok": False, "error": "thread not found"}
 
 
-def create_thread(service: str, signal_id: str, timestamp: str) -> dict:
+def create_thread(service: str | None, signal_id: str, timestamp: str) -> dict:
     """Open a new thread for a signal and return its id."""
     threads = _load()
     new_id = "THR-" + str(len(threads) + 1).zfill(3)

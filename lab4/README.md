@@ -4,7 +4,7 @@ Shadid Alam Al Huda (40334643). Submission date: **27 October 2026**. This exten
 
 ## Run in VS Code
 
-Open the repository folder containing both `agent.py` and the `lab4` folder. Use Terminal > New Terminal. Run from that repository root, not from inside `lab4`.
+Open the `threadline` repository folder (the one that contains `README.md` and the `lab4` folder). Use Terminal > New Terminal. Run from that repository root, not from inside `lab4`.
 
 ```sh
 python3 -m lab4.run --mode dynamic --output lab4/traces/my_dynamic.json
@@ -80,7 +80,7 @@ Static: Correlator -> Narrator -> Validator -> Action Drafter, once each, with a
 
 Dynamic: the same core, but skip specialists for duplicate replay; request human review without drafting for missing service; return rejection feedback to Narrator once; escalate after two failures. Dynamic routing is controlled by code using runtime outcomes, not by an LLM manager. Agents communicate through typed-purpose JSON payloads; they do not share private model chats.
 
-The new store uses full dated timestamps with numeric UTC offsets. It never edits Lab 3's `fixtures/threads.json`; each scenario is isolated. An older arrival starts another thread under this prototype's explicit no-backdating policy. That prevents timestamp regression but may split an incident; this tradeoff needs future evaluation.
+The new store uses full dated timestamps with numeric UTC offsets. It never edits Lab 3's `lab3_correlator/fixtures/threads.json`; each scenario is isolated. An older arrival starts another thread under this prototype's explicit no-backdating policy. That prevents timestamp regression but may split an incident; this tradeoff needs future evaluation.
 
 ## Your branch and team workflow
 

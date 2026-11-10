@@ -1,0 +1,119 @@
+{
+  "description": "Explicit design contracts; not wired into the original SDK-generated tool declarations.",
+  "functions": [
+    {
+      "name": "list_open_threads",
+      "description": "Return all open threads.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "minutes_between",
+      "description": "Compute signed minute difference.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "earlier": {
+            "type": "string",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+          },
+          "later": {
+            "type": "string",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+          }
+        },
+        "required": [
+          "earlier",
+          "later"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_candidate_threads",
+      "description": "Find open threads matching service and time window. Supply 30 for the correlation policy.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+          },
+          "window_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          }
+        },
+        "required": [
+          "service",
+          "timestamp",
+          "window_minutes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "attach_signal",
+      "description": "Attach a signal to a thread and persist activity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "signal_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+          }
+        },
+        "required": [
+          "thread_id",
+          "signal_id",
+          "timestamp"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_thread",
+      "description": "Create and persist a thread. The current interface rejects null service.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "minLength": 1
+          },
+          "signal_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+          }
+        },
+        "required": [
+          "service",
+          "signal_id",
+          "timestamp"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

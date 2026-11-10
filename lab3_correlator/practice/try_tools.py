@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # lets this practice script find tools.py
+
 import tools
 
 print(tools.minutes_between("14:01", "14:09"))
