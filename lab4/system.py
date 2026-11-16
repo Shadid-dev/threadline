@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Protocol
 
+from .guardrails import check_cause_words, check_injection, guard_signal
+
 
 SUMMARY_SCHEMA = {
     "type": "object", "additionalProperties": False,
@@ -340,11 +342,15 @@ class Orchestrator:
 
     def run(self, signal):
         self.events = []
-        signal = validate_signal(signal)
+        signal = validate_signal(signal)                       # G1: schema
+        signal = guard_signal(signal)                          # G2 + G3: injection flag, secret redaction
+        guards = {"injection_detected": signal.pop("injection_detected"),
+                  "redactions": signal.pop("redactions"), "cause_words": []}
+        self.emit("Guardrails", "input_check", guards)
         self.emit("Manager", "input", {"backend": self.backend.name, "mode": self.mode, "signal": signal})
         thread, decision = self.correlator.decide(signal, self.store, self.emit)
         result = {"correlation": decision, "summary": None, "action": None,
-                  "status": "needs_human_review", "executed_actions": []}
+                  "status": "needs_human_review", "executed_actions": [], "guardrails": guards}
         if self.mode == "dynamic" and decision["decision"] == "duplicate":
             result["status"] = "duplicate_ignored"
             self.emit("Manager", "skip_specialists", {"reason": "identical signal already processed"})
@@ -367,10 +373,20 @@ class Orchestrator:
             self.emit("Grounding Validator", "verdict", verdict)
             if verdict["approved"]:
                 result["summary"] = draft
+                # G7: flag cause words so the reviewer knows a quote claims a cause nobody has verified.
+                guards["cause_words"] = check_cause_words(" ".join(o["quote"] for o in draft["observations"]))
+                if guards["cause_words"]:
+                    self.emit("Guardrails", "output_warning", {"cause_words": guards["cause_words"]})
                 break
             feedback = verdict["errors"]
         if result["summary"] is None:
             self.emit("Manager", "escalate", {"reason": "summary rejected; revision budget exhausted"})
+            return self.finish(result)
+        # G2: if any signal in this thread tries to give orders, no action is drafted for the thread.
+        flagged = [s["signal_id"] for s in evidence if check_injection(s["content"])]
+        if flagged:
+            self.emit("Manager", "skip_action_drafter",
+                      {"reason": "possible prompt injection; human review required", "signals": flagged})
             return self.finish(result)
         if self.mode == "dynamic" and decision["requires_review"]:
             self.emit("Manager", "skip_action_drafter", {"reason": "service missing; human identification required"})
