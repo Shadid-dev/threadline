@@ -328,7 +328,7 @@ class ActionDrafter:
 
 class Orchestrator:
     """Central cooperative manager; static sequence or bounded adaptive routing."""
-    def __init__(self, mode="dynamic", backend=None, store=None):
+    def __init__(self, mode="dynamic", backend=None, store=None, queue=None):
         if mode not in {"static", "dynamic"}:
             raise ValueError("mode must be static or dynamic")
         self.mode = mode
@@ -338,6 +338,7 @@ class Orchestrator:
         self.narrator = Narrator(self.backend)
         self.validator = GroundingValidator()
         self.drafter = ActionDrafter(self.backend)
+        self.queue = queue          # H1: ApprovalQueue, or None to keep proposals in the result only
         self.events = []
 
     def emit(self, sender, event, payload):
@@ -400,6 +401,10 @@ class Orchestrator:
             result["action"] = self.drafter.decide(evidence, thread["service"], result["summary"])
             self.emit("Action Drafter", "proposal", result["action"])
             result["status"] = "needs_human_review" if decision["requires_review"] else "awaiting_approval"
+            if self.queue is not None:
+                # H1: the proposal waits as 'pending'; the run stops here until a person decides.
+                result["approval_id"] = self.queue.submit(thread["thread_id"], result["action"], result["guardrails"])
+                self.emit("Manager", "queued_for_approval", {"approval_id": result["approval_id"]})
         except Exception as exc:
             self.emit("Action Drafter", "error", {"type": type(exc).__name__})
         return self.finish(result)

@@ -4,10 +4,11 @@ import json
 from pathlib import Path
 
 from .scenarios import SCENARIOS, FaultBackend
+from .approval import ApprovalQueue
 from .system import ConcordiaBackend, GeminiBackend, OfflineBackend, Orchestrator, ThreadStore, save_json
 
 
-def run_scenarios(mode="dynamic", backend=None, selected=None):
+def run_scenarios(mode="dynamic", backend=None, selected=None, queue=None):
     outputs = []
     for scenario in SCENARIOS:
         if selected and scenario["name"] not in selected:
@@ -19,7 +20,7 @@ def run_scenarios(mode="dynamic", backend=None, selected=None):
         active = backend or OfflineBackend()
         if scenario.get("fault"):
             active = FaultBackend(active, scenario["fault"])
-        system = Orchestrator(mode, active, store)
+        system = Orchestrator(mode, active, store, queue)
         output = system.run(scenario["signal"])
         outputs.append({"scenario": scenario["name"], "prompt": scenario["prompt"],
                         "seed": scenario["seed"], "expected_decision": scenario["decision"],
@@ -35,6 +36,7 @@ def main():
                         help="Default: qwen3-8b for Concordia; gemini-flash-latest for Gemini")
     parser.add_argument("--scenario", choices=[s["name"] for s in SCENARIOS], action="append")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--queue", type=Path, help="Folder for the approval queue and audit log (H1-H3)")
     parser.add_argument("--signal-file", type=Path,
                         help="Process one JSON signal against a fresh run-local store")
     args = parser.parse_args()
@@ -44,10 +46,11 @@ def main():
         backend = ConcordiaBackend(args.model or "qwen3-8b")
     else:
         backend = OfflineBackend()
+    queue = ApprovalQueue(args.queue) if args.queue else None
     if args.signal_file:
-        outputs = [Orchestrator(args.mode, backend).run(json.loads(args.signal_file.read_text()))]
+        outputs = [Orchestrator(args.mode, backend, queue=queue).run(json.loads(args.signal_file.read_text()))]
     else:
-        outputs = run_scenarios(args.mode, backend, args.scenario)
+        outputs = run_scenarios(args.mode, backend, args.scenario, queue)
     if args.output:
         save_json(args.output, outputs)
         print(f"Saved {len(outputs)} run(s) to {args.output}")
