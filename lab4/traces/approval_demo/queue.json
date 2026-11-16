@@ -1,0 +1,104 @@
+[
+  {
+    "proposal_id": "APR-001",
+    "thread_id": "THR-001",
+    "action": {
+      "kind": "inspect_evidence",
+      "cited_signals": [
+        "SIG-001"
+      ],
+      "requires_human_approval": true
+    },
+    "guardrails": {
+      "injection_detected": false,
+      "redactions": 0,
+      "cause_words": []
+    },
+    "status": "approved",
+    "executed": false,
+    "submitted_at": "2026-11-16T23:03:41+00:00",
+    "decided_by": "Shadid",
+    "reason": "Error rate and stack trace point to the same checkout incident",
+    "decided_at": "2026-11-16T23:03:41+00:00"
+  },
+  {
+    "proposal_id": "APR-002",
+    "thread_id": "THR-001",
+    "action": {
+      "kind": "inspect_evidence",
+      "cited_signals": [
+        "SIG-001",
+        "SIG-002"
+      ],
+      "requires_human_approval": true
+    },
+    "guardrails": {
+      "injection_detected": false,
+      "redactions": 0,
+      "cause_words": []
+    },
+    "status": "pending",
+    "executed": false,
+    "submitted_at": "2026-11-16T23:03:41+00:00"
+  },
+  {
+    "proposal_id": "APR-003",
+    "thread_id": "THR-002",
+    "action": {
+      "kind": "inspect_evidence",
+      "cited_signals": [
+        "SIG-003"
+      ],
+      "requires_human_approval": true
+    },
+    "guardrails": {
+      "injection_detected": false,
+      "redactions": 0,
+      "cause_words": []
+    },
+    "status": "rejected",
+    "executed": false,
+    "submitted_at": "2026-11-16T23:03:41+00:00",
+    "decided_by": "Shadid",
+    "reason": "Login slowdown is a separate issue; keep watching",
+    "decided_at": "2026-11-16T23:03:41+00:00"
+  },
+  {
+    "proposal_id": "APR-004",
+    "thread_id": "THR-002",
+    "action": {
+      "kind": "inspect_evidence",
+      "cited_signals": [
+        "SIG-006"
+      ],
+      "requires_human_approval": true
+    },
+    "guardrails": {
+      "injection_detected": false,
+      "redactions": 0,
+      "cause_words": []
+    },
+    "status": "pending",
+    "executed": false,
+    "submitted_at": "2026-11-16T23:03:41+00:00"
+  },
+  {
+    "proposal_id": "APR-005",
+    "thread_id": "THR-001",
+    "action": {
+      "kind": "inspect_evidence",
+      "cited_signals": [
+        "SIG-001"
+      ],
+      "requires_human_approval": true
+    },
+    "guardrails": {
+      "injection_detected": false,
+      "redactions": 0,
+      "cause_words": []
+    },
+    "status": "pending",
+    "executed": false,
+    "submitted_at": "2026-11-16T23:03:41+00:00"
+  }
+]
