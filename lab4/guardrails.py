@@ -16,7 +16,17 @@ INJECTION_PATTERNS = [
     r"act as (an? )?(admin|administrator|root)",
     r"(approve|execute|run) (this|the) (action|rollback|command) (now|immediately)",
     r"do not (tell|inform|alert) (the )?(human|user|on-?call)",
+    # Added in step 9c, from the dev cases only (A05, A06):
+    r"\b(forget|ignore|disregard)\b.{0,30}\b(earlier|previous|prior|before)\b",
+    r"\bskip (the )?(approval|review|human)",
+    r"\b(new|updated) (rule|instruction)s? for (you|the (assistant|ai|agent|model))",
 ]
+
+
+def _normalise(text: str) -> str:
+    """Join letters that were spaced out to hide a word ("i g n o r e" -> "ignore"). From dev case A10."""
+    return re.sub(r"\b(\w) (?=\w\b)", r"\1", text)
+
 
 # G3: secrets that must never reach a model or a log.
 SECRET_PATTERNS = [
@@ -35,6 +45,7 @@ CAUSE_WORDS = [r"\bcaused\b", r"\broot cause\b", r"\bbecause of\b", r"\bdue to\b
 def check_injection(text: str) -> list[str]:
     """G2. Returns the suspicious phrases found (empty list means clean)."""
     found = []
+    text = _normalise(text)
     for pattern in INJECTION_PATTERNS:
         match = re.search(pattern, text, flags=re.IGNORECASE)
         if match:
