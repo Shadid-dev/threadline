@@ -68,3 +68,48 @@ def guard_signal(signal: dict) -> dict:
     guarded["injection_detected"] = bool(hits)
     guarded["redactions"] = guarded_count
     return guarded
+
+# R1: least privilege. Each agent may call only the tools listed here; an empty set means no tools.
+TOOL_PERMISSIONS = {
+    "Correlator": {"find_candidate_threads", "commit_signal"},
+    "Narrator": set(),
+    "Grounding Validator": set(),
+    "Action Drafter": set(),
+}
+
+# G4: the arguments each tool accepts, written as JSON schemas.
+TOOL_SCHEMAS = {
+    "find_candidate_threads": {
+        "type": "object", "additionalProperties": False,
+        "properties": {"service": {"type": ["string", "null"]}, "timestamp": {"type": "string"}},
+        "required": ["service", "timestamp"],
+    },
+    "commit_signal": {
+        "type": "object", "additionalProperties": False,
+        "properties": {"signal": {"type": "object"}, "thread_id": {"type": ["string", "null"]}},
+        "required": ["signal", "thread_id"],
+    },
+}
+
+_JSON_TYPES = {"string": str, "object": dict, "null": type(None)}
+
+
+class ToolDenied(PermissionError):
+    """Raised when R1 or G4 refuses a tool call. The tool never runs."""
+
+
+def check_tool_call(agent: str, tool: str, arguments: dict) -> None:
+    """R1 then G4. Returns nothing when the call is allowed; raises ToolDenied otherwise."""
+    if tool not in TOOL_PERMISSIONS.get(agent, set()):
+        raise ToolDenied(f"R1: {agent} is not allowed to call {tool}")
+    schema = TOOL_SCHEMAS[tool]
+    if not isinstance(arguments, dict):
+        raise ToolDenied(f"G4: {tool} arguments must be an object")
+    missing = set(schema["required"]) - set(arguments)
+    extra = set(arguments) - set(schema["properties"])
+    if missing or extra:
+        raise ToolDenied(f"G4: {tool} missing {sorted(missing)}, unexpected {sorted(extra)}")
+    for name, rule in schema["properties"].items():
+        allowed = rule["type"] if isinstance(rule["type"], list) else [rule["type"]]
+        if not isinstance(arguments[name], tuple(_JSON_TYPES[t] for t in allowed)):
+            raise ToolDenied(f"G4: {tool}.{name} must be {' or '.join(allowed)}")
