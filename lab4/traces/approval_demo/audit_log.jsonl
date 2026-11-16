@@ -1,0 +1,7 @@
+{"time": "2026-11-16T23:03:41+00:00", "proposal_id": "APR-001", "event": "submitted", "by": "Supervisor", "thread_id": "THR-001"}
+{"time": "2026-11-16T23:03:41+00:00", "proposal_id": "APR-002", "event": "submitted", "by": "Supervisor", "thread_id": "THR-001"}
+{"time": "2026-11-16T23:03:41+00:00", "proposal_id": "APR-003", "event": "submitted", "by": "Supervisor", "thread_id": "THR-002"}
+{"time": "2026-11-16T23:03:41+00:00", "proposal_id": "APR-004", "event": "submitted", "by": "Supervisor", "thread_id": "THR-002"}
+{"time": "2026-11-16T23:03:41+00:00", "proposal_id": "APR-005", "event": "submitted", "by": "Supervisor", "thread_id": "THR-001"}
+{"time": "2026-11-16T23:03:41+00:00", "proposal_id": "APR-001", "event": "approved", "by": "Shadid", "reason": "Error rate and stack trace point to the same checkout incident", "executed": false}
+{"time": "2026-11-16T23:03:41+00:00", "proposal_id": "APR-003", "event": "rejected", "by": "Shadid", "reason": "Login slowdown is a separate issue; keep watching", "executed": false}

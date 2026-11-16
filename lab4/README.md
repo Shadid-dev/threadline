@@ -9,7 +9,7 @@ Open the `threadline` repository folder (the one that contains `README.md` and t
 ```sh
 python3 -m lab4.run --mode dynamic --output lab4/traces/my_dynamic.json
 python3 -m lab4.run --mode static --output lab4/traces/my_static.json
-python3 -m unittest lab4.test_system lab4.test_concordia -v
+python3 -m unittest lab4.test_system lab4.test_concordia lab4.test_guardrails
 ```
 
 The default is an actual executable **rule-based** multi-agent prototype. It uses no API key, installed packages, or model calls. Its Narrator includes exact evidence quotations, not a generated causal explanation. The traces identify the backend as `offline-rules`.

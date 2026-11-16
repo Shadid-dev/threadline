@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Protocol
 
+from .guardrails import check_cause_words, check_injection, check_tool_call, guard_signal
+
 
 SUMMARY_SCHEMA = {
     "type": "object", "additionalProperties": False,
@@ -219,14 +221,18 @@ class Correlator:
         old = store.locate(signal["signal_id"])
         if old:
             # commit also checks that a replay has identical content.
+            check_tool_call("Correlator", "commit_signal", {"signal": signal, "thread_id": None})  # R1 + G4
             thread, changed = store.commit(signal)
             decision = "duplicate"
         else:
-            candidates = store.candidates(signal["service"], signal["timestamp"])
+            args = {"service": signal["service"], "timestamp": signal["timestamp"]}
+            check_tool_call("Correlator", "find_candidate_threads", args)                          # R1 + G4
+            candidates = store.candidates(**args)
             emit("Correlator", "tool_result", {"tool": "find_candidate_threads",
-                 "arguments": {"service": signal["service"], "timestamp": signal["timestamp"]},
-                 "result": [t["thread_id"] for t in candidates]})
-            thread, changed = store.commit(signal, candidates[0]["thread_id"] if candidates else None)
+                 "arguments": args, "result": [t["thread_id"] for t in candidates]})
+            target = candidates[0]["thread_id"] if candidates else None
+            check_tool_call("Correlator", "commit_signal", {"signal": signal, "thread_id": target})  # R1 + G4
+            thread, changed = store.commit(signal, target)
             decision = "attach" if candidates else "create"
         result = {"decision": decision, "thread_id": thread["thread_id"],
                   "requires_review": signal["service"] is None, "state_changed": changed}
@@ -322,7 +328,7 @@ class ActionDrafter:
 
 class Orchestrator:
     """Central cooperative manager; static sequence or bounded adaptive routing."""
-    def __init__(self, mode="dynamic", backend=None, store=None):
+    def __init__(self, mode="dynamic", backend=None, store=None, queue=None):
         if mode not in {"static", "dynamic"}:
             raise ValueError("mode must be static or dynamic")
         self.mode = mode
@@ -332,6 +338,7 @@ class Orchestrator:
         self.narrator = Narrator(self.backend)
         self.validator = GroundingValidator()
         self.drafter = ActionDrafter(self.backend)
+        self.queue = queue          # H1: ApprovalQueue, or None to keep proposals in the result only
         self.events = []
 
     def emit(self, sender, event, payload):
@@ -340,11 +347,15 @@ class Orchestrator:
 
     def run(self, signal):
         self.events = []
-        signal = validate_signal(signal)
+        signal = validate_signal(signal)                       # G1: schema
+        signal = guard_signal(signal)                          # G2 + G3: injection flag, secret redaction
+        guards = {"injection_detected": signal.pop("injection_detected"),
+                  "redactions": signal.pop("redactions"), "cause_words": []}
+        self.emit("Guardrails", "input_check", guards)
         self.emit("Manager", "input", {"backend": self.backend.name, "mode": self.mode, "signal": signal})
         thread, decision = self.correlator.decide(signal, self.store, self.emit)
         result = {"correlation": decision, "summary": None, "action": None,
-                  "status": "needs_human_review", "executed_actions": []}
+                  "status": "needs_human_review", "executed_actions": [], "guardrails": guards}
         if self.mode == "dynamic" and decision["decision"] == "duplicate":
             result["status"] = "duplicate_ignored"
             self.emit("Manager", "skip_specialists", {"reason": "identical signal already processed"})
@@ -367,10 +378,20 @@ class Orchestrator:
             self.emit("Grounding Validator", "verdict", verdict)
             if verdict["approved"]:
                 result["summary"] = draft
+                # G7: flag cause words so the reviewer knows a quote claims a cause nobody has verified.
+                guards["cause_words"] = check_cause_words(" ".join(o["quote"] for o in draft["observations"]))
+                if guards["cause_words"]:
+                    self.emit("Guardrails", "output_warning", {"cause_words": guards["cause_words"]})
                 break
             feedback = verdict["errors"]
         if result["summary"] is None:
             self.emit("Manager", "escalate", {"reason": "summary rejected; revision budget exhausted"})
+            return self.finish(result)
+        # G2: if any signal in this thread tries to give orders, no action is drafted for the thread.
+        flagged = [s["signal_id"] for s in evidence if check_injection(s["content"])]
+        if flagged:
+            self.emit("Manager", "skip_action_drafter",
+                      {"reason": "possible prompt injection; human review required", "signals": flagged})
             return self.finish(result)
         if self.mode == "dynamic" and decision["requires_review"]:
             self.emit("Manager", "skip_action_drafter", {"reason": "service missing; human identification required"})
@@ -380,6 +401,10 @@ class Orchestrator:
             result["action"] = self.drafter.decide(evidence, thread["service"], result["summary"])
             self.emit("Action Drafter", "proposal", result["action"])
             result["status"] = "needs_human_review" if decision["requires_review"] else "awaiting_approval"
+            if self.queue is not None:
+                # H1: the proposal waits as 'pending'; the run stops here until a person decides.
+                result["approval_id"] = self.queue.submit(thread["thread_id"], result["action"], result["guardrails"])
+                self.emit("Manager", "queued_for_approval", {"approval_id": result["approval_id"]})
         except Exception as exc:
             self.emit("Action Drafter", "error", {"type": type(exc).__name__})
         return self.finish(result)

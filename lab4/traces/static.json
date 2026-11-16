@@ -27,11 +27,26 @@
         "requires_human_approval": true
       },
       "status": "awaiting_approval",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -47,7 +62,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -60,7 +75,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -71,7 +86,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -84,7 +99,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -97,7 +112,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -106,7 +121,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -114,7 +129,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Action Drafter",
         "event": "proposal",
         "payload": {
@@ -126,7 +141,7 @@
         }
       },
       {
-        "sequence": 9,
+        "sequence": 10,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -152,7 +167,12 @@
             "requires_human_approval": true
           },
           "status": "awaiting_approval",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -215,11 +235,26 @@
         "requires_human_approval": true
       },
       "status": "awaiting_approval",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -235,7 +270,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -250,7 +285,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -261,7 +296,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -275,7 +310,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -292,7 +327,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -301,7 +336,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -309,7 +344,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Action Drafter",
         "event": "proposal",
         "payload": {
@@ -322,7 +357,7 @@
         }
       },
       {
-        "sequence": 9,
+        "sequence": 10,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -353,7 +388,12 @@
             "requires_human_approval": true
           },
           "status": "awaiting_approval",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -418,11 +458,26 @@
         "requires_human_approval": true
       },
       "status": "awaiting_approval",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -438,7 +493,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -451,7 +506,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -462,7 +517,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -475,7 +530,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -488,7 +543,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -497,7 +552,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -505,7 +560,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Action Drafter",
         "event": "proposal",
         "payload": {
@@ -517,7 +572,7 @@
         }
       },
       {
-        "sequence": 9,
+        "sequence": 10,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -543,7 +598,12 @@
             "requires_human_approval": true
           },
           "status": "awaiting_approval",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -608,11 +668,26 @@
         "requires_human_approval": true
       },
       "status": "needs_human_review",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -628,7 +703,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -641,7 +716,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -652,7 +727,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -665,7 +740,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -678,7 +753,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -687,7 +762,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -695,7 +770,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Action Drafter",
         "event": "proposal",
         "payload": {
@@ -707,7 +782,7 @@
         }
       },
       {
-        "sequence": 9,
+        "sequence": 10,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -733,7 +808,12 @@
             "requires_human_approval": true
           },
           "status": "needs_human_review",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -794,20 +874,28 @@
           }
         ]
       },
-      "action": {
-        "kind": "inspect_evidence",
-        "cited_signals": [
-          "SIG-001",
-          "SIG-005"
-        ],
-        "requires_human_approval": true
-      },
-      "status": "awaiting_approval",
-      "executed_actions": []
+      "action": null,
+      "status": "needs_human_review",
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": true,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": true,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -823,7 +911,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -838,7 +926,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -849,7 +937,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -863,7 +951,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -880,7 +968,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -889,24 +977,14 @@
         }
       },
       {
-        "sequence": 7,
-        "sender": "Manager",
-        "event": "dispatch",
-        "payload": {
-          "agent": "Action Drafter"
-        }
-      },
-      {
         "sequence": 8,
-        "sender": "Action Drafter",
-        "event": "proposal",
+        "sender": "Manager",
+        "event": "skip_action_drafter",
         "payload": {
-          "kind": "inspect_evidence",
-          "cited_signals": [
-            "SIG-001",
+          "reason": "possible prompt injection; human review required",
+          "signals": [
             "SIG-005"
-          ],
-          "requires_human_approval": true
+          ]
         }
       },
       {
@@ -932,16 +1010,14 @@
               }
             ]
           },
-          "action": {
-            "kind": "inspect_evidence",
-            "cited_signals": [
-              "SIG-001",
-              "SIG-005"
-            ],
-            "requires_human_approval": true
-          },
-          "status": "awaiting_approval",
-          "executed_actions": []
+          "action": null,
+          "status": "needs_human_review",
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": true,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -1021,11 +1097,26 @@
         "requires_human_approval": true
       },
       "status": "awaiting_approval",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -1041,7 +1132,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -1052,7 +1143,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -1065,7 +1156,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -1078,7 +1169,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -1087,7 +1178,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -1095,7 +1186,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Action Drafter",
         "event": "proposal",
         "payload": {
@@ -1107,7 +1198,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -1133,7 +1224,12 @@
             "requires_human_approval": true
           },
           "status": "awaiting_approval",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -1191,11 +1287,26 @@
         "requires_human_approval": true
       },
       "status": "awaiting_approval",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -1211,7 +1322,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -1224,7 +1335,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -1235,7 +1346,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -1248,7 +1359,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -1261,7 +1372,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -1270,7 +1381,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -1278,7 +1389,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Action Drafter",
         "event": "proposal",
         "payload": {
@@ -1290,7 +1401,7 @@
         }
       },
       {
-        "sequence": 9,
+        "sequence": 10,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -1316,7 +1427,12 @@
             "requires_human_approval": true
           },
           "status": "awaiting_approval",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -1368,11 +1484,26 @@
       "summary": null,
       "action": null,
       "status": "needs_human_review",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -1388,7 +1519,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -1401,7 +1532,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -1412,7 +1543,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -1425,7 +1556,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -1438,7 +1569,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -1449,7 +1580,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Manager",
         "event": "escalate",
         "payload": {
@@ -1457,7 +1588,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -1470,7 +1601,12 @@
           "summary": null,
           "action": null,
           "status": "needs_human_review",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
@@ -1507,11 +1643,26 @@
       "summary": null,
       "action": null,
       "status": "needs_human_review",
-      "executed_actions": []
+      "executed_actions": [],
+      "guardrails": {
+        "injection_detected": false,
+        "redactions": 0,
+        "cause_words": []
+      }
     },
     "trace": [
       {
         "sequence": 1,
+        "sender": "Guardrails",
+        "event": "input_check",
+        "payload": {
+          "injection_detected": false,
+          "redactions": 0,
+          "cause_words": []
+        }
+      },
+      {
+        "sequence": 2,
         "sender": "Manager",
         "event": "input",
         "payload": {
@@ -1527,7 +1678,7 @@
         }
       },
       {
-        "sequence": 2,
+        "sequence": 3,
         "sender": "Correlator",
         "event": "tool_result",
         "payload": {
@@ -1540,7 +1691,7 @@
         }
       },
       {
-        "sequence": 3,
+        "sequence": 4,
         "sender": "Correlator",
         "event": "decision",
         "payload": {
@@ -1551,7 +1702,7 @@
         }
       },
       {
-        "sequence": 4,
+        "sequence": 5,
         "sender": "Manager",
         "event": "dispatch",
         "payload": {
@@ -1564,7 +1715,7 @@
         }
       },
       {
-        "sequence": 5,
+        "sequence": 6,
         "sender": "Narrator",
         "event": "proposal",
         "payload": {
@@ -1577,7 +1728,7 @@
         }
       },
       {
-        "sequence": 6,
+        "sequence": 7,
         "sender": "Grounding Validator",
         "event": "verdict",
         "payload": {
@@ -1588,7 +1739,7 @@
         }
       },
       {
-        "sequence": 7,
+        "sequence": 8,
         "sender": "Manager",
         "event": "escalate",
         "payload": {
@@ -1596,7 +1747,7 @@
         }
       },
       {
-        "sequence": 8,
+        "sequence": 9,
         "sender": "Manager",
         "event": "final",
         "payload": {
@@ -1609,7 +1760,12 @@
           "summary": null,
           "action": null,
           "status": "needs_human_review",
-          "executed_actions": []
+          "executed_actions": [],
+          "guardrails": {
+            "injection_detected": false,
+            "redactions": 0,
+            "cause_words": []
+          }
         }
       }
     ],
