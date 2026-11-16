@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Protocol
 
-from .guardrails import check_cause_words, check_injection, guard_signal
+from .guardrails import check_cause_words, check_injection, check_tool_call, guard_signal
 
 
 SUMMARY_SCHEMA = {
@@ -221,14 +221,18 @@ class Correlator:
         old = store.locate(signal["signal_id"])
         if old:
             # commit also checks that a replay has identical content.
+            check_tool_call("Correlator", "commit_signal", {"signal": signal, "thread_id": None})  # R1 + G4
             thread, changed = store.commit(signal)
             decision = "duplicate"
         else:
-            candidates = store.candidates(signal["service"], signal["timestamp"])
+            args = {"service": signal["service"], "timestamp": signal["timestamp"]}
+            check_tool_call("Correlator", "find_candidate_threads", args)                          # R1 + G4
+            candidates = store.candidates(**args)
             emit("Correlator", "tool_result", {"tool": "find_candidate_threads",
-                 "arguments": {"service": signal["service"], "timestamp": signal["timestamp"]},
-                 "result": [t["thread_id"] for t in candidates]})
-            thread, changed = store.commit(signal, candidates[0]["thread_id"] if candidates else None)
+                 "arguments": args, "result": [t["thread_id"] for t in candidates]})
+            target = candidates[0]["thread_id"] if candidates else None
+            check_tool_call("Correlator", "commit_signal", {"signal": signal, "thread_id": target})  # R1 + G4
+            thread, changed = store.commit(signal, target)
             decision = "attach" if candidates else "create"
         result = {"decision": decision, "thread_id": thread["thread_id"],
                   "requires_review": signal["service"] is None, "state_changed": changed}
