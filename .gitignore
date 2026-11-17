@@ -185,3 +185,4 @@ cython_debug/
 ~$*.docx
 .venv/
 lab4/approvals/
+service_data/
