@@ -3,11 +3,12 @@ import os
 import tempfile
 import unittest
 
-os.environ["THREADLINE_QUEUE_DIR"] = tempfile.mkdtemp()   # never touch the real queue in tests
+os.environ["DATABASE_URL"] = "sqlite:///" + os.path.join(tempfile.mkdtemp(), "test.db")   # never touch the real database
 
 from fastapi.testclient import TestClient
 
 from service import app as service
+from service.storage import Database, DbApprovalQueue, DbThreadStore
 
 SIGNAL = {"signal_id": "SIG-001", "source": "monitor", "service": "checkout",
           "timestamp": "2026-11-17T14:01:00-05:00", "content": "Checkout error rate 18 percent"}
@@ -16,6 +17,7 @@ SIGNAL = {"signal_id": "SIG-001", "source": "monitor", "service": "checkout",
 class ServiceTests(unittest.TestCase):
     def setUp(self):
         service.STORE.threads.clear()
+        service.DB.put("threads", [])
         self.client = TestClient(service.app)
 
     def test_health(self):
@@ -40,6 +42,18 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(refused.status_code, 409)
         ok = self.client.post(f"/approvals/{approval_id}", json={"decision": "approve", "by": "Shadid", "reason": "matches"})
         self.assertEqual(ok.json()["status"], "approved")
+
+
+    def test_threads_and_approvals_survive_a_restart(self):
+        approval_id = self.client.post("/signals", json=dict(SIGNAL, signal_id="SIG-003")).json()["approval_id"]
+        self.client.post(f"/approvals/{approval_id}", json={"decision": "reject", "by": "Shadid", "reason": "test"})
+        # A "restart": brand-new objects that only share the database file.
+        db = Database(os.environ["DATABASE_URL"])
+        self.assertEqual([t["thread_id"] for t in DbThreadStore(db).threads], ["THR-001"])
+        proposal = next(p for p in DbApprovalQueue(db)._load() if p["proposal_id"] == approval_id)
+        self.assertEqual(proposal["status"], "rejected")
+        events = [e["event"] for e in db.audit_entries() if e["proposal_id"] == approval_id]
+        self.assertEqual(events, ["submitted", "rejected"])   # H3: both steps, in order
 
 
 if __name__ == "__main__":

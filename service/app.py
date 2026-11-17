@@ -6,20 +6,21 @@ Then open http://127.0.0.1:8000/docs to try every endpoint in the browser.
 """
 from __future__ import annotations
 
-import os
 import threading
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from lab4.approval import ApprovalError, ApprovalQueue
-from lab4.system import OfflineBackend, Orchestrator, ThreadStore
+from lab4.approval import ApprovalError
+from lab4.system import OfflineBackend, Orchestrator
+from service.storage import Database, DbApprovalQueue, DbThreadStore
 
 app = FastAPI(title="ThreadLine", description="Shared incident context for responders and agents.")
 
-# One store, one approval queue and one Supervisor for the whole service.
-STORE = ThreadStore()
-QUEUE = ApprovalQueue(os.getenv("THREADLINE_QUEUE_DIR", "service_data/approvals"))
+# One database, store, approval queue and Supervisor for the whole service.
+DB = Database()                      # DATABASE_URL, or a local SQLite file by default
+STORE = DbThreadStore(DB)
+QUEUE = DbApprovalQueue(DB)
 SYSTEM = Orchestrator(mode="dynamic", backend=OfflineBackend(), store=STORE, queue=QUEUE)
 LOCK = threading.Lock()   # one signal at a time, so two requests never edit the store together
 
@@ -68,6 +69,7 @@ def pending_approvals():
 @app.post("/approvals/{proposal_id}")
 def decide(proposal_id: str, decision: Decision):
     try:
-        return QUEUE.decide(proposal_id, decision.decision, decision.by, decision.reason)
+        with LOCK:                           # same lock as /signals: one writer at a time
+            return QUEUE.decide(proposal_id, decision.decision, decision.by, decision.reason)
     except ApprovalError as exc:             # H2 refused the decision; nothing changed
         raise HTTPException(status_code=409, detail=str(exc))
