@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Protocol
 
-from .guardrails import check_cause_words, check_injection, check_tool_call, guard_signal
+from .guardrails import ToolDenied, check_cause_words, check_injection, check_tool_call, guard_signal
 
 
 SUMMARY_SCHEMA = {
@@ -353,7 +353,13 @@ class Orchestrator:
                   "redactions": signal.pop("redactions"), "cause_words": []}
         self.emit("Guardrails", "input_check", guards)
         self.emit("Manager", "input", {"backend": self.backend.name, "mode": self.mode, "signal": signal})
-        thread, decision = self.correlator.decide(signal, self.store, self.emit)
+        try:
+            thread, decision = self.correlator.decide(signal, self.store, self.emit)
+        except ToolDenied as exc:
+            # R1 / G4: the refused tool never ran. Record why in the trace and stop for a person.
+            self.emit("Guardrails", "tool_denied", {"agent": "Correlator", "reason": str(exc)})
+            return self.finish({"correlation": None, "summary": None, "action": None,
+                                "status": "needs_human_review", "executed_actions": [], "guardrails": guards})
         result = {"correlation": decision, "summary": None, "action": None,
                   "status": "needs_human_review", "executed_actions": [], "guardrails": guards}
         if self.mode == "dynamic" and decision["decision"] == "duplicate":

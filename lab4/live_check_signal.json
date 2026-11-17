@@ -1,0 +1,1 @@
+{"signal_id": "SIG-101", "source": "slack", "service": "checkout", "timestamp": "2026-11-16T19:00:00-05:00", "content": "I think the deploy caused this. Log shows password=hunter2 on db-1"}

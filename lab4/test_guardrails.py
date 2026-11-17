@@ -5,6 +5,8 @@ Run from the repository root:  python3 -m unittest lab4.test_guardrails
 import json
 import tempfile
 import unittest
+from unittest import mock
+from unittest.mock import patch
 
 from .approval import ApprovalError, ApprovalQueue
 from .guardrails import ToolDenied, check_cause_words, check_tool_call, guard_signal
@@ -56,6 +58,18 @@ class OutputGuardrailTests(unittest.TestCase):
 
 
 class ToolGuardrailTests(unittest.TestCase):
+    def test_denied_tool_stops_processing_for_human_review(self):
+        system = Orchestrator()
+        with patch("lab4.system.check_tool_call", side_effect=ToolDenied("R1: denied")):
+            run = system.run(signal())
+        self.assertEqual(run["result"]["status"], "needs_human_review")
+        self.assertIsNone(run["result"]["correlation"])
+        self.assertIsNone(run["result"]["action"])
+        self.assertEqual(system.store.threads, [])
+        self.assertEqual(system.narrator.state.calls, 0)
+        self.assertTrue(any(e["event"] == "tool_denied" for e in run["trace"]))
+        self.assertEqual(run["trace"][-1]["event"], "final")
+
     def test_r1_only_the_correlator_may_write(self):
         for agent in ("Narrator", "Grounding Validator", "Action Drafter"):
             with self.assertRaises(ToolDenied):
@@ -72,7 +86,15 @@ class ToolGuardrailTests(unittest.TestCase):
         for arguments in bad:
             with self.assertRaises(ToolDenied):
                 check_tool_call("Correlator", "find_candidate_threads", arguments)
-
+    def test_r1_refusal_is_logged_and_store_is_unchanged(self):
+        store = ThreadStore()
+        with mock.patch.dict("lab4.guardrails.TOOL_PERMISSIONS", {"Correlator": set()}):
+            run = Orchestrator(store=store).run(signal())
+        denied = [e for e in run["trace"] if e["event"] == "tool_denied"]
+        self.assertEqual(len(denied), 1)
+        self.assertIn("R1", denied[0]["payload"]["reason"])
+        self.assertEqual(run["result"]["status"], "needs_human_review")
+        self.assertEqual(store.threads, [])
     def test_g4_accepts_a_null_service(self):
         check_tool_call("Correlator", "find_candidate_threads", {"service": None, "timestamp": "x"})
 
