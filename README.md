@@ -8,7 +8,7 @@ When software breaks, the evidence is scattered: a code release on GitHub, a cra
 
 ---
 
-## 1. Where the project stands (November 2026)
+## 1. Where the project stands (November 26 2026)
 
 | Part | Status |
 |---|---|
